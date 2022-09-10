@@ -2,7 +2,7 @@
   "name": "joedb-js",
   "version": "1.0.0",
   "description": "",
-  "main": "./joedb-client",
+  "main": "./index",
   "scripts": {
     "test": "mocha"
   },

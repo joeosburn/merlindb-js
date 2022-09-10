@@ -10,18 +10,18 @@ const JSONfn = {};
     });
   }
 }());
-
-function JoeDB(socket) {
-  this.socket = socket;
+function JoeDB(url) {
+  this.socket = new net.Socket();
+  this.url = url;
   this.request = {};
   this.requests = [];
   this.receivedData = null;
 
-  socket.on('close', () => {
+  this.socket.on('close', () => {
     // console.log('disconnected');=
   });
 
-  socket.on('data', (data) => {
+  this.socket.on('data', (data) => {
     const stamp = data.readDoubleBE();
     const result = msgpack.decode(data.slice(12, data.length));
     result['requestTime'] = (currentTime() - stamp).toPrecision(2);
@@ -111,7 +111,7 @@ JoeDB.prototype.queue = function() {
 
 JoeDB.prototype.run = function(opts = {}, cb) {
   let message = this.request;
-  
+
   if (this.requests.length) {
     this.queue();
     message = {
@@ -141,6 +141,13 @@ JoeDB.prototype.run = function(opts = {}, cb) {
   }
 };
 
+JoeDB.prototype.connect = function() {
+  const urlMatches = this.url.match(/joedb\:\/\/([^\:]+)\:(\d+)/);
+  this.socket.connect(parseInt(urlMatches[2], 10), urlMatches[1], function() {
+    return new Promise((resolve, reject) => resolve());
+  });
+}
+
 JoeDB.prototype.disconnect = function() {
   this.socket.destroy();
 };
@@ -159,13 +166,4 @@ function requestHeader(request) {
   return header;
 }
 
-module.exports = url => ({
-  url,
-  connect(cb) {
-    const socket = new net.Socket();
-    const urlMatches = url.match(/joedb\:\/\/([^\:]+)\:(\d+)/);
-    socket.connect(parseInt(urlMatches[2], 10), urlMatches[1], function() {
-      cb(new JoeDB(socket));
-    });
-  }
-});
+module.exports = JoeDB;

@@ -1,21 +1,15 @@
 const { expect } = require('chai');
-
-const client = require('../joedb-client');
+const JoeDB = require('..');
 const { requestTime, resetFruit, resetCars, resetBooks } = require('./helpers.js');
+const joedb = new JoeDB('joedb://localhost:8080');
 
 describe('Queries', function() {
-  var joedb;
-
-  before(function(done) {
-    client('joedb://localhost:8080').connect((conn) => {
-      joedb = conn;
-      done();
-    });
+  before(async () => {
+    await joedb.connect();
+    await resetFruit(joedb);
   });
 
-  before(async () => await resetFruit(joedb));
-
-  after(function() {
+  after(() => {
     joedb.disconnect();
   });
 

@@ -1,21 +1,12 @@
 const { expect } = require('chai');
-
-const client = require('../joedb-client');
+const JoeDB = require('..');
 const { requestTime, resetFruit } = require('./helpers.js');
+const joedb = new JoeDB('joedb://localhost:8080');
 
 describe('Mutations', function() {
-  var joedb;
+  before(async () => await joedb.connect());
 
-  before(function(done) {
-    client('joedb://localhost:8080').connect((conn) => {
-      joedb = conn;
-      done();
-    });
-  });
-
-  after(function() {
-    joedb.disconnect();
-  })
+  after(() => joedb.disconnect());
 
   it('inserts data into a table', async () => {
     await resetFruit(joedb);

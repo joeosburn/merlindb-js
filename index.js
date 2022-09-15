@@ -12,7 +12,7 @@ function JoeDB(url) {
   });
 
   this.socket.on('data', (data) => {
-    const stamp = data.readDoubleBE();
+    const stamp = data.readDoubleLE();
     const result = msgpack.decode(data.slice(12, data.length));
     result['requestTime'] = (currentTime() - stamp).toPrecision(2);
     this.receivedData(result);
@@ -148,8 +148,8 @@ function currentTime() {
 function requestHeader(request) {
   const header = Buffer.allocUnsafe(14);
   header.writeUInt8(1);
-  header.writeUInt32BE(request.length, 1);
-  header.writeDoubleBE(currentTime(), 5);
+  header.writeUint32LE(request.length, 1);
+  header.writeDoubleLE(currentTime(), 5);
   header.writeUInt8(30, 13);
   return header;
 }

@@ -5,6 +5,7 @@ function JoeDB(url) {
   this.url = url;
   this.request = {};
   this.requests = [];
+  this.incomingBuffer = null;
   this.receivedData = null;
 
   this.socket.on('close', () => {
@@ -12,11 +13,25 @@ function JoeDB(url) {
   });
 
   this.socket.on('data', (data) => {
-    const stamp = data.readDoubleLE();
-    const result = msgpack.decode(data.slice(12, data.length));
-    result['requestTime'] = (currentTime() - stamp).toPrecision(2);
+    if (this.incomingBuffer == null) {
+      this.incomingBuffer = data;
+    } else {
+      this.incomingBuffer = Buffer.concat([this.incomingBuffer, data])
+    }
+
+    if (this.incomingBuffer.length < 12) return;
+
+    const size = this.incomingBuffer.readUint32LE(8);
+
+    if ((size + 12) > this.incomingBuffer.length) return;
+
+    const stamp = this.incomingBuffer.readDoubleLE();
+    let requestTime = (currentTime() - stamp).toPrecision(2);
+    const result = msgpack.decode(this.incomingBuffer.slice(12, this.incomingBuffer.length));
+    result['requestTime'] = requestTime;
     this.receivedData(result);
     this.receivedData = null;
+    this.incomingBuffer = null;
   });
 }
 

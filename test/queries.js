@@ -227,25 +227,6 @@ describe('Queries', function() {
       ]);
     });
 
-    it('filters with a function', async () => {
-      let result = await joedb.table('fruits').filter({size: (size) => size == 'Medium'}).run();
-      requestTime(result);
-      expect(result['rows']).to.deep.equal([
-        {
-          fruit: 'Apple',
-          color: 'Red',
-          id: 'apple',
-          size: 'Medium'
-        },
-        {
-          fruit: 'Peach',
-          color: 'Orange',
-          id: 'peach',
-          size: 'Medium'
-        }
-      ]);
-    });
-
     it('filters on boolean values', async () => {
       await resetCars(joedb);
       let result = await joedb.table('cars').filter({american: true}).withFields({id: true}).run();

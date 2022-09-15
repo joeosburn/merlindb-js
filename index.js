@@ -1,15 +1,5 @@
 const net = require('net');
 const msgpack = require('msgpack-lite');
-
-const JSONfn = {};
-
-(function () {
-  JSONfn.stringify = function(obj) {
-    return JSON.stringify(obj,function(key, value) {
-      return typeof value === 'function' ?  { _type: 'function', _src: value.toString() } : value;
-    });
-  }
-}());
 function JoeDB(url) {
   this.socket = new net.Socket();
   this.url = url;
@@ -118,8 +108,6 @@ JoeDB.prototype.run = function(opts = {}, cb) {
       "requests": this.requests
     };
   }
-
-  message = JSON.parse(JSONfn.stringify(message));
 
   var messageStr = msgpack.encode(message);
   this.socket.write(requestHeader(messageStr));

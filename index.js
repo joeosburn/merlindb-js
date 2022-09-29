@@ -41,7 +41,7 @@ JoeDB.prototype.table = function(tableName) {
   return this;
 };
 
-JoeDB.prototype.withFields = function(fields) {
+JoeDB.prototype.fields = function(fields) {
   this.request.fields = fields;
   return this;
 };

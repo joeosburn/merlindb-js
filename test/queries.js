@@ -58,7 +58,7 @@ describe('Queries', function() {
   });
 
   it('selects certain fields', async () => {
-    let result = await joedb.table('fruits').withFields({fruit: true, size: true}).run();
+    let result = await joedb.table('fruits').fields({fruit: true, size: true}).run();
     requestTime(result);
     expect(result['rows']).to.deep.equal([
       {
@@ -81,7 +81,7 @@ describe('Queries', function() {
   });
 
   it('selects certain fields with other names', async () => {
-    let result = await joedb.table('fruits').withFields({fruit: 'name', id: 'key'}).run();
+    let result = await joedb.table('fruits').fields({fruit: 'name', id: 'key'}).run();
     requestTime(result);
     expect(result['rows']).to.deep.equal([
       {
@@ -105,7 +105,7 @@ describe('Queries', function() {
 
   it('selects nested fields', async () => {
     await resetCars(joedb);
-    let result = await joedb.table('cars').withFields({type: true, about: {'model': true, engine: {plugin: true}}}).run();
+    let result = await joedb.table('cars').fields({type: true, about: {'model': true, engine: {plugin: true}}}).run();
     requestTime(result);
     expect(result['rows']).to.deep.equal([
       {
@@ -229,7 +229,7 @@ describe('Queries', function() {
 
     it('filters on boolean values', async () => {
       await resetCars(joedb);
-      let result = await joedb.table('cars').filter({american: true}).withFields({id: true}).run();
+      let result = await joedb.table('cars').filter({american: true}).fields({id: true}).run();
       requestTime(result);
       expect(result['rows']).to.deep.equal([
         {

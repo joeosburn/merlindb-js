@@ -42,6 +42,10 @@ JoeDB.prototype.table = function(tableName) {
 };
 
 JoeDB.prototype.fields = function(fields) {
+  if (Array.isArray(fields)) {
+    fields = Object.fromEntries(fields.map(name => [name, true]));
+  }
+
   this.request.fields = fields;
   return this;
 };

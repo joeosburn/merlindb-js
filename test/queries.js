@@ -58,7 +58,7 @@ describe('Queries', function() {
   });
 
   it('selects certain fields', async () => {
-    let result = await joedb.table('fruits').fields({fruit: true, size: true}).run();
+    let result = await joedb.table('fruits').fields(['fruit', 'size']).run();
     requestTime(result);
     expect(result['rows']).to.deep.equal([
       {

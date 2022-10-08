@@ -6,7 +6,9 @@ function JoeDB(url) {
   this.request = {};
   this.requests = [];
   this.incomingBuffer = null;
-  this.receivedData = null;
+
+  this.handlers = {};
+  this.handler = 0;
 
   this.socket.on('close', () => {
     // console.log('disconnected');=
@@ -25,12 +27,12 @@ function JoeDB(url) {
 
     if ((size + 12) > this.incomingBuffer.length) return;
 
-    const stamp = this.incomingBuffer.readDoubleLE();
-    let requestTime = (currentTime() - stamp).toPrecision(2);
+    const handlerNumber = this.incomingBuffer.readDoubleLE();
+    const timestamp = this.handlers[handlerNumber].timestamp;
+    let requestTime = (currentTime() - timestamp).toPrecision(2);
     const result = msgpack.decode(this.incomingBuffer.slice(12, this.incomingBuffer.length));
     result['requestTime'] = requestTime;
-    this.receivedData(result);
-    this.receivedData = null;
+    this.handlers[handlerNumber].cb(result);
     this.incomingBuffer = null;
   });
 }
@@ -128,22 +130,33 @@ JoeDB.prototype.run = function(opts = {}, cb) {
     };
   }
 
+  const handlerNumber = this.handler;
+
+  this.handler++;
+  if (this.handler > 500) this.handler = 0;
+
   var messageStr = msgpack.encode(message);
-  this.socket.write(requestHeader(messageStr));
+  this.socket.write(requestHeader(messageStr, handlerNumber));
   this.socket.write(messageStr);
 
   if (cb) {
-    this.receivedData = (result) => {
-      this.request = {};
-      cb(result);
-    };
+    this.handlers[handlerNumber] = {
+      timestamp: currentTime(),
+      cb: (result) => {
+          this.request = {};
+          cb(result);
+        }
+      }
   } else {
     return (new Promise((resolve, reject) => {
-      this.receivedData = (result) => {
-        this.request = {};
-        this.requests = [];
-        resolve(result);
-      };
+      this.handlers[handlerNumber] = {
+        timestamp: currentTime(),
+        cb: (result) => {
+          this.request = {};
+          this.requests = [];
+          resolve(result);
+        }
+      }
     }));
   }
 };
@@ -164,11 +177,11 @@ function currentTime() {
   return (hrtime[0] * 1000000 + hrtime[1] / 1000 ) / 1000;
 }
 
-function requestHeader(request) {
+function requestHeader(request, stamp) {
   const header = Buffer.allocUnsafe(14);
   header.writeUInt8(1);
   header.writeUint32LE(request.length, 1);
-  header.writeDoubleLE(currentTime(), 5);
+  header.writeDoubleLE(stamp, 5);
   header.writeUInt8(30, 13);
   return header;
 }

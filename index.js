@@ -109,6 +109,13 @@ JoeDB.prototype.dropTable = function(tableName) {
   return this;
 };
 
+JoeDB.prototype.renameTable = function(oldTableName, newTableName) {
+  this.request.request = 'renameTable';
+  this.request.oldTableName = oldTableName;
+  this.request.newTableName = newTableName;
+  return this;
+};
+
 JoeDB.prototype.as = function(requestName) {
   this.request.requestName = requestName;
   return this;

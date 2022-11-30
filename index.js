@@ -5,7 +5,7 @@ function JoeDB(url) {
   this.url = url;
   this.request = {};
   this.requests = [];
-  this.incomingBuffer = null;
+  this.incomingBuffer = Buffer.alloc(0);
 
   this.handlers = {};
   this.handler = 0;
@@ -15,25 +15,34 @@ function JoeDB(url) {
   });
 
   this.socket.on('data', (data) => {
-    if (this.incomingBuffer == null) {
-      this.incomingBuffer = data;
-    } else {
-      this.incomingBuffer = Buffer.concat([this.incomingBuffer, data])
+    this.incomingBuffer = Buffer.concat([this.incomingBuffer, data]);
+
+    if (this.incomingBuffer.length < 12) {
+      return;
     }
 
-    if (this.incomingBuffer.length < 12) return;
+    const messageSize = this.incomingBuffer.readUint32LE(8);
+    const totalSize = 12 + messageSize;
 
-    const size = this.incomingBuffer.readUint32LE(8);
-
-    if ((size + 12) > this.incomingBuffer.length) return;
+    if (this.incomingBuffer.length < totalSize) {
+      return;
+    }
 
     const handlerNumber = this.incomingBuffer.readDoubleLE();
     const timestamp = this.handlers[handlerNumber].timestamp;
     let requestTime = (currentTime() - timestamp).toPrecision(2);
-    const result = msgpack.decode(this.incomingBuffer.slice(12, this.incomingBuffer.length));
+
+    const response = this.incomingBuffer.subarray(12, totalSize);
+
+    if (this.incomingBuffer.length > totalSize) {
+      this.incomingBuffer = this.incomingBuffer.subarray(totalSize);
+    } else {
+      this.incomingBuffer = Buffer.alloc(0);
+    }
+
+    const result = msgpack.decode(response);
     result['requestTime'] = requestTime;
     this.handlers[handlerNumber].cb(result);
-    this.incomingBuffer = null;
   });
 }
 

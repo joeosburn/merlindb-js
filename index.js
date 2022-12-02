@@ -146,6 +146,9 @@ JoeDB.prototype.run = function(opts = {}, cb) {
     };
   }
 
+  this.request = {};
+  this.requests = [];
+
   const handlerNumber = this.handler;
 
   this.handler++;
@@ -159,7 +162,6 @@ JoeDB.prototype.run = function(opts = {}, cb) {
     this.handlers[handlerNumber] = {
       timestamp: currentTime(),
       cb: (result) => {
-          this.request = {};
           cb(result);
         }
       }
@@ -168,8 +170,6 @@ JoeDB.prototype.run = function(opts = {}, cb) {
       this.handlers[handlerNumber] = {
         timestamp: currentTime(),
         cb: (result) => {
-          this.request = {};
-          this.requests = [];
           resolve(result);
         }
       }

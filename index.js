@@ -66,6 +66,11 @@ JoeDB.prototype.filter = function(filters) {
   return this;
 };
 
+JoeDB.prototype.postFilter = function(filters) {
+  this.request.postFilters = { ...(this.request.postFilters || {}), ...filters };
+  return this;
+};
+
 JoeDB.prototype.include = function(includes) {
   this.request.includes = this.request.includes || [];
   this.request.includes.push(includes);

@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const JoeDB = require('..');
 const { requestTime, resetFruit, resetCars, resetBooks } = require('./helpers.js');
-const joedb = new JoeDB('joedb://localhost:8080');
+const joedb = new JoeDB('joedb://default:joedb@localhost:8080');
 
 describe('Queries', function() {
   before(async () => {

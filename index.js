@@ -141,7 +141,7 @@ JoeDB.prototype.queue = function() {
   return this;
 }
 
-JoeDB.prototype.run = function(opts = {}, cb) {
+JoeDB.prototype.run = function(cb) {
   let message = this.request;
 
   if (this.requests.length) {
@@ -166,10 +166,8 @@ JoeDB.prototype.run = function(opts = {}, cb) {
   if (cb) {
     this.handlers[handlerNumber] = {
       timestamp: currentTime(),
-      cb: (result) => {
-          cb(result);
-        }
-      }
+      cb: result => cb(result)
+    }
   } else {
     return (new Promise((resolve, reject) => {
       this.handlers[handlerNumber] = {
@@ -183,10 +181,30 @@ JoeDB.prototype.run = function(opts = {}, cb) {
 };
 
 JoeDB.prototype.connect = function() {
-  const urlMatches = this.url.match(/joedb\:\/\/([^\:]+)\:(\d+)/);
-  this.socket.connect(parseInt(urlMatches[2], 10), urlMatches[1], function() {
-    return new Promise((resolve, reject) => resolve());
-  });
+  const urlMatches = this.url.match(/joedb\:\/\/(?:([^:@]+):?([^@]+)?@)?([^:]+)\:(\d+)/);
+  const username = urlMatches[1];
+  const password = urlMatches[2];
+  const host = urlMatches[3];
+  const port = parseInt(urlMatches[4], 10);
+
+  return (new Promise((resolve, reject) => {
+    this.socket.connect(port, host, () => {
+      if (username != null && password != null) {
+        this.request.request = 'authenticate';
+        this.request.username = username;
+        this.request.password = password;
+
+        this.run((result) => {
+          if (result["status"] != "OK") {
+            throw new Error('Failed to authenticate');
+          }
+          resolve()
+        });
+      } else {
+        resolve();
+      }
+    });
+  }));
 }
 
 JoeDB.prototype.disconnect = function() {

@@ -13,6 +13,23 @@ describe('Queries', function() {
     joedb.disconnect();
   });
 
+  it('handles a bunch of queries at once', async () => {
+    joedb.table('fruits').run();
+    joedb.table('fruits').run();
+    joedb.table('fruits').run();
+    joedb.table('fruits').run();
+    let result = await joedb.table('fruits').get('apple').run();
+    requestTime(result);
+    expect(result['rows']).to.deep.equal([
+      {
+        fruit: 'Apple',
+        color: 'Red',
+        id: 'apple',
+        size: 'Medium'
+      }
+    ]);
+  });
+
   it('queries a table', async () => {
     let result = await joedb.table('fruits').run();
     requestTime(result);

@@ -120,6 +120,28 @@ describe('Queries', function() {
     ]);
   });
 
+  it('orders results', async () => {
+    let result = await joedb.table('fruits').fields(['fruit']).order('fruit').run();
+    requestTime(result);
+    expect(result['rows']).to.deep.equal([
+      { fruit: 'Apple' },
+      { fruit: 'Cherry' },
+      { fruit: 'Peach' },
+      { fruit: 'Watermelon' }
+    ]);
+  });
+
+  it('orders results desc', async () => {
+    let result = await joedb.table('fruits').fields(['fruit']).order({'fruit':'desc'}).run();
+    requestTime(result);
+    expect(result['rows']).to.deep.equal([
+      { fruit: 'Watermelon' },
+      { fruit: 'Peach' },
+      { fruit: 'Cherry' },
+      { fruit: 'Apple' }
+    ]);
+  });
+
   it('selects nested fields', async () => {
     await resetCars(joedb);
     let result = await joedb.table('cars').fields({type: true, about: {'model': true, engine: {plugin: true}}}).run();

@@ -81,6 +81,18 @@ JoeDB.prototype.get = function(id) {
   return this;
 };
 
+JoeDB.prototype.order = function(order) {
+  this.request.order = this.request.order || [];
+
+  if (typeof order === 'string') {
+    this.request.order.push({[order]: true});
+  } else {
+    this.request.order.push(order);
+  }
+
+  return this;
+}
+
 JoeDB.prototype.insert = function(rows) {
   this.request.request = 'insert';
   this.request.rows = Array.isArray(rows) ? rows : Array.of(rows);

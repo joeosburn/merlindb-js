@@ -205,7 +205,7 @@ describe('Queries', function() {
   });
 
   describe('Filtering', () => {
-    it('filters on fields', async () => {
+    it('filters on one condition', async () => {
       let result = await joedb.table('fruits').filter({size: 'Medium'}).run();
       requestTime(result);
       expect(result['rows']).to.deep.equal([
@@ -221,6 +221,39 @@ describe('Queries', function() {
           id: 'peach',
           size: 'Medium'
         }
+      ]);
+    });
+
+    it('filters on two conditions', async () => {
+      let result = await joedb.table('fruits').filter({size: 'Medium', color: 'Orange'}).run();
+      requestTime(result);
+      expect(result['rows']).to.deep.equal([
+        {
+          fruit: 'Peach',
+          color: 'Orange',
+          id: 'peach',
+          size: 'Medium'
+        }
+      ]);
+    });
+
+    it('filters on two or conditions', async () => {
+      let result = await joedb.table('fruits').fields(['id']).orFilter({color: 'Orange'}, {color: 'Green'}).run();
+      requestTime(result);
+      expect(result['rows']).to.deep.equal([
+        { id: 'peach' },
+        { id: 'watermelon' }
+      ]);
+    });
+
+    it('filters on three or conditions', async () => {
+      let result = await joedb.table('fruits').fields(['id'])
+        .orFilter({color: 'Orange'}, {color: 'Green'}, {size: 'Medium'}).run();
+      requestTime(result);
+      expect(result['rows']).to.deep.equal([
+        { id: 'apple' },
+        { id: 'peach' },
+        { id: 'watermelon' }
       ]);
     });
 

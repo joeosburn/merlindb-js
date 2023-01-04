@@ -60,12 +60,18 @@ JoeDB.prototype.fields = function(fields) {
 };
 
 JoeDB.prototype.filter = function(filters) {
-  this.request.filters = { ...(this.request.filters || {}), ...filters };
+  this.request.filters = this.request.filters || {};
+  this.request.filters = { ...this.request.filters, ...filters };
   return this;
 };
 
+JoeDB.prototype.orFilter = function(...filters) {
+  return this.filter({__or: filters});
+};
+
 JoeDB.prototype.postFilter = function(filters) {
-  this.request.postFilters = { ...(this.request.postFilters || {}), ...filters };
+  this.request.postFilters = this.request.postFilters || {};
+  this.request.postFilters = { ...this.request.postFilters, ...filters };
   return this;
 };
 

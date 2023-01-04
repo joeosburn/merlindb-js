@@ -142,6 +142,15 @@ describe('Queries', function() {
     ]);
   });
 
+  it('limits results', async () => {
+    let result = await joedb.table('fruits').fields(['id']).limit(2).run();
+    requestTime(result);
+    expect(result['rows']).to.deep.equal([
+      { id: 'apple' },
+      { id: 'cherry' }
+    ]);
+  });
+
   it('selects nested fields', async () => {
     await resetCars(joedb);
     let result = await joedb.table('cars').fields({type: true, about: {'model': true, engine: {plugin: true}}}).run();

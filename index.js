@@ -93,6 +93,11 @@ JoeDB.prototype.order = function(order) {
   return this;
 }
 
+JoeDB.prototype.limit = function(limit) {
+  this.request.limit = limit;
+  return this;
+}
+
 JoeDB.prototype.insert = function(rows) {
   this.request.request = 'insert';
   this.request.rows = Array.isArray(rows) ? rows : Array.of(rows);

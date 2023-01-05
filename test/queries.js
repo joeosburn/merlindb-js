@@ -621,7 +621,7 @@ describe('Queries', function() {
     });
 
     it('filters on included fields', async () => {
-      let results = await joedb.table('meals').include({side: 'fruits'}).postFilter({side: {color: 'Red'}}).run();
+      let results = await joedb.table('meals').include({side: 'fruits'}).filter({side: {color: 'Red'}}).run();
       requestTime(results);
       expect(results['rows']).to.deep.equal([
         {

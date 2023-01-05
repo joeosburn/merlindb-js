@@ -69,9 +69,9 @@ JoeDB.prototype.orFilter = function(...filters) {
   return this.filter({__or: filters});
 };
 
-JoeDB.prototype.postFilter = function(filters) {
-  this.request.postFilters = this.request.postFilters || {};
-  this.request.postFilters = { ...this.request.postFilters, ...filters };
+JoeDB.prototype.prefilter = function(filters) {
+  this.request.prefilters = this.request.prefilters || {};
+  this.request.prefilters = { ...this.request.prefilters, ...filters };
   return this;
 };
 

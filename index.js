@@ -60,8 +60,16 @@ JoeDB.prototype.fields = function(fields) {
 };
 
 JoeDB.prototype.filter = function(filters) {
-  this.request.filters = this.request.filters || {};
-  this.request.filters = { ...this.request.filters, ...filters };
+  if (this.request.filters) {
+    if (!Array.isArray(this.request.filters)) {
+      this.request.filters = [this.request.filters];
+    }
+
+    this.request.filters.push(filters);
+  } else {
+    this.request.filters = filters;
+  }
+
   return this;
 };
 
@@ -70,8 +78,16 @@ JoeDB.prototype.orFilter = function(...filters) {
 };
 
 JoeDB.prototype.prefilter = function(filters) {
-  this.request.prefilters = this.request.prefilters || {};
-  this.request.prefilters = { ...this.request.prefilters, ...filters };
+  if (this.request.prefilters) {
+    if (!Array.isArray(this.request.prefilters)) {
+      this.request.prefilters = [this.request.prefilters];
+    }
+
+    this.request.prefilters.push(filters);
+  } else {
+    this.request.prefilters = filters;
+  }
+
   return this;
 };
 

@@ -194,7 +194,7 @@ JoeDB.prototype.run = function(cb) {
   const handlerNumber = this.handler;
 
   this.handler++;
-  if (this.handler > 500) this.handler = 0;
+  if (this.handler > 1000) this.handler = 0;
 
   var messageStr = msgpack.encode(message);
   this.socket.write(requestHeader(messageStr, handlerNumber));

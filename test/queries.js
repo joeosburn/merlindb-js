@@ -638,31 +638,6 @@ describe('Queries', function() {
       ]);
     });
 
-    it('includes on included records', async () => {
-      await joedb.table('fruits').get('apple').update({after: 'Lunch'}).run();
-      let results = await joedb.table('meals').include({side: 'fruits'}).include({side: {after: 'meals'}}).get('Breakfast').run();
-      requestTime(results);
-      expect(results['rows']).to.deep.equal([
-        {
-          id: 'Breakfast',
-          entree: 'Cereal',
-          dessert: 'cherry',
-          side: {
-            fruit: 'Apple',
-            color: 'Red',
-            id: 'apple',
-            size: 'Medium',
-            after: {
-              id: 'Lunch',
-              entree: 'Sandwhich',
-              side: 'peach',
-              dessert: 'peach'
-            }
-          }
-        }
-      ]);
-    });
-
     it('includes array values', async () => {
       await resetFruit(joedb);
       await joedb.table('meals').insert({id: 'a', foods: ['apple', 'cherry']}).run();

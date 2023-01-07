@@ -73,10 +73,6 @@ JoeDB.prototype.filter = function(filters) {
   return this;
 };
 
-JoeDB.prototype.orFilter = function(...filters) {
-  return this.filter({__or: filters});
-};
-
 JoeDB.prototype.prefilter = function(filters) {
   if (this.request.prefilters) {
     if (!Array.isArray(this.request.prefilters)) {
@@ -246,6 +242,10 @@ JoeDB.prototype.connect = function() {
 
 JoeDB.prototype.disconnect = function() {
   this.socket.destroy();
+};
+
+JoeDB.Or = function(...filters) {
+  return {__or: filters};
 };
 
 function currentTime() {

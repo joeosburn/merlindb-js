@@ -239,7 +239,7 @@ describe('Queries', function() {
 
     it('filters on two similar conditions', async () => {
       let result = await joedb.table('fruits').fields(['id'])
-        .filter([{'fruit CONTAINS': 'a'}, {'fruit CONTAINS': 'm'}])
+        .filter([{'size CONTAINS': 'a'}, {'size CONTAINS': 'e'}])
         .run();
       requestTime(result);
       expect(result['rows']).to.deep.equal([
@@ -248,7 +248,8 @@ describe('Queries', function() {
     });
 
     it('filters on two or conditions', async () => {
-      let result = await joedb.table('fruits').fields(['id']).orFilter({color: 'Orange'}, {color: 'Green'}).run();
+      let result = await joedb.table('fruits').fields(['id'])
+        .orFilter({color: 'Orange'}, {color: 'Green'}).run();
       requestTime(result);
       expect(result['rows']).to.deep.equal([
         { id: 'peach' },

@@ -441,7 +441,7 @@ describe('Queries', function() {
 
     it('filters in a range', async () => {
       await resetBooks(joedb);
-      let result = await joedb.table('books').filter({'published >': 1700, 'published <': 1900}).run();
+      let result = await joedb.table('books').filter([{'published >': 1700}, {'published <': 1900}]).run();
       requestTime(result);
       expect(result['rows']).to.deep.equal([
         {

@@ -60,6 +60,8 @@ JoeDB.prototype.fields = function(fields) {
 };
 
 JoeDB.prototype.filter = function(filters) {
+  filters = prepareFilter(filters);
+
   if (this.request.filters) {
     if (!Array.isArray(this.request.filters)) {
       this.request.filters = [this.request.filters];
@@ -74,6 +76,8 @@ JoeDB.prototype.filter = function(filters) {
 };
 
 JoeDB.prototype.prefilter = function(filters) {
+  filters = prepareFilter(filters);
+
   if (this.request.prefilters) {
     if (!Array.isArray(this.request.prefilters)) {
       this.request.prefilters = [this.request.prefilters];
@@ -260,6 +264,45 @@ function requestHeader(request, stamp) {
   header.writeDoubleLE(stamp, 5);
   header.writeUInt8(30, 13);
   return header;
+}
+
+function prepareFilter(filters) {
+  if (Array.isArray(filters)) {
+    return filters.map((filter) => prepareFilter(filter));
+  } else if (Object.getPrototypeOf(filters) === Object.prototype) {
+    Object.keys(filters).forEach((key) => {
+      const value = filters[key];
+
+      if (Object.getPrototypeOf(value) === Object.prototype) {
+        filters[key] = prepareFilter(value);
+      } else if (Array.isArray(value)) {
+        filters[key] = value.map((filter) => prepareFilter(filter));
+      } else {
+        const [ newKey, newValue ] = prepareFilterValue(key, value);
+        delete filters[key];
+        filters[newKey] = newValue;
+      }
+    });
+
+    return filters;
+  } else {
+    return filters;
+  }
+}
+
+function prepareFilterValue(key, value) {
+  const keyInfo = key.split(' ');
+
+  key = keyInfo[0];
+  const operator = keyInfo[1] || '==';
+
+  return [
+    key,
+    {
+      __operator: operator,
+      __value: value
+    }
+  ]
 }
 
 module.exports = JoeDB;

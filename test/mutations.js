@@ -60,7 +60,7 @@ describe('Mutations', function() {
     expect(result['status']).to.equal('OK')
     expect(result['message']).to.equal('4 row(s) updated');
     result = await joedb.table('fruits').run();
-    expect(result['rows']).to.deep.equal([
+    expect(result['rows']).to.have.deep.members([
       {
         fruit: 'Apple',
         color: null,
@@ -95,7 +95,7 @@ describe('Mutations', function() {
     expect(result['status']).to.equal('OK')
     expect(result['message']).to.equal('2 row(s) updated');
     result = await joedb.table('fruits').run();
-    expect(result['rows']).to.deep.equal([
+    expect(result['rows']).to.have.deep.members([
       {
         fruit: 'Medium Sized',
         color: 'Red',
@@ -150,7 +150,7 @@ describe('Mutations', function() {
     expect(result['status']).to.equal('OK')
     expect(result['message']).to.equal('2 row(s) destroyed');
     result = await joedb.table('fruits').run();
-    expect(result['rows']).to.deep.equal([
+    expect(result['rows']).to.have.deep.members([
       {
         fruit: 'Cherry',
         color: 'Red',

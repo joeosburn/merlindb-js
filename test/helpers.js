@@ -126,6 +126,10 @@ const bookRows = [
   }
 ];
 
+const chai = require('chai');
+const chaiArrays = require('chai-arrays');
+chai.use(chaiArrays);
+
 module.exports.resetBooks = async (joedb) => {
   await joedb.createTable('books').run();
   await joedb.table('books').destroy().run();

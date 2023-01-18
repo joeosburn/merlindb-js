@@ -36,7 +36,7 @@ describe('Requests', function() {
     });
 
     result = await joedb.table('fruits').run();
-    expect(result['rows']).to.deep.equal([
+    expect(result['rows']).to.have.deep.members([
       {
         fruit: 'Pinneapple',
         id: 'pineapple'

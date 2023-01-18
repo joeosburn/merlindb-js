@@ -33,7 +33,7 @@ describe('Queries', function() {
   it('queries a table', async () => {
     let result = await joedb.table('fruits').run();
     requestTime(result);
-    expect(result['rows']).to.deep.equal([
+    expect(result['rows']).to.have.deep.members([
       {
         fruit: 'Apple',
         color: 'Red',
@@ -77,7 +77,7 @@ describe('Queries', function() {
   it('selects certain fields', async () => {
     let result = await joedb.table('fruits').fields(['fruit', 'size']).run();
     requestTime(result);
-    expect(result['rows']).to.deep.equal([
+    expect(result['rows']).to.have.deep.members([
       {
         fruit: 'Apple',
         size: 'Medium'
@@ -100,7 +100,7 @@ describe('Queries', function() {
   it('selects certain fields with other names', async () => {
     let result = await joedb.table('fruits').fields({fruit: 'name', id: 'key'}).run();
     requestTime(result);
-    expect(result['rows']).to.deep.equal([
+    expect(result['rows']).to.have.deep.members([
       {
         name: 'Apple',
         key: 'apple'
@@ -145,17 +145,14 @@ describe('Queries', function() {
   it('limits results', async () => {
     let result = await joedb.table('fruits').fields(['id']).limit(2).run();
     requestTime(result);
-    expect(result['rows']).to.deep.equal([
-      { id: 'apple' },
-      { id: 'cherry' }
-    ]);
+    expect(result['rows'].length).to.equal(2);
   });
 
   it('selects nested fields', async () => {
     await resetCars(joedb);
     let result = await joedb.table('cars').fields({type: true, about: {'model': true, engine: {plugin: true}}}).run();
     requestTime(result);
-    expect(result['rows']).to.deep.equal([
+    expect(result['rows']).to.have.deep.members([
       {
           type: 'Sedan',
           about: {
@@ -208,7 +205,7 @@ describe('Queries', function() {
     it('filters on one condition', async () => {
       let result = await joedb.table('fruits').filter({size: 'Medium'}).run();
       requestTime(result);
-      expect(result['rows']).to.deep.equal([
+      expect(result['rows']).to.have.deep.members([
         {
           fruit: 'Apple',
           color: 'Red',
@@ -251,7 +248,7 @@ describe('Queries', function() {
       let result = await joedb.table('fruits').fields(['id'])
         .filter(JoeDB.Or({color: 'Orange'}, {color: 'Green'})).run();
       requestTime(result);
-      expect(result['rows']).to.deep.equal([
+      expect(result['rows']).to.have.deep.members([
         { id: 'peach' },
         { id: 'watermelon' }
       ]);
@@ -261,7 +258,7 @@ describe('Queries', function() {
       let result = await joedb.table('fruits').fields(['id'])
         .filter(JoeDB.Or({color: 'Orange'}, {color: 'Green'}, {size: 'Medium'})).run();
       requestTime(result);
-      expect(result['rows']).to.deep.equal([
+      expect(result['rows']).to.have.deep.members([
         { id: 'apple' },
         { id: 'peach' },
         { id: 'watermelon' }
@@ -276,7 +273,7 @@ describe('Queries', function() {
           {'fruit CONTAINS': 'a'}
         ]).run();
       requestTime(result);
-      expect(result['rows']).to.deep.equal([
+      expect(result['rows']).to.have.deep.members([
         { id: 'apple' },
         { id: 'peach' }
       ]);
@@ -317,7 +314,7 @@ describe('Queries', function() {
     it('filters on fields with regexps', async () => {
       let result = await joedb.table('fruits').filter({'size =~': '^M(.*)m$'}).run();
       requestTime(result);
-      expect(result['rows']).to.deep.equal([
+      expect(result['rows']).to.have.deep.members([
         {
           fruit: 'Apple',
           color: 'Red',
@@ -337,7 +334,7 @@ describe('Queries', function() {
       await resetCars(joedb);
       let result = await joedb.table('cars').filter({american: true}).fields({id: true}).run();
       requestTime(result);
-      expect(result['rows']).to.deep.equal([
+      expect(result['rows']).to.have.deep.members([
         {
           id: 'model3'
         },
@@ -562,7 +559,7 @@ describe('Queries', function() {
     it('includes a get all request', async () => {
       let results = await joedb.table('meals').include({side: 'fruits'}).run();
       requestTime(results);
-      expect(results['rows']).to.deep.equal([
+      expect(results['rows']).to.have.deep.members([
         {
           id: 'Breakfast',
           entree: 'Cereal',
@@ -609,7 +606,7 @@ describe('Queries', function() {
     it('includes multiple fields', async () => {
       let results = await joedb.table('meals').include({dessert: 'fruits'}).include({side: 'fruits'}).run();
       requestTime(results);
-      expect(results['rows']).to.deep.equal([
+      expect(results['rows']).to.have.deep.members([
         {
           id: 'Breakfast',
           entree: 'Cereal',

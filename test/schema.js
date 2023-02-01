@@ -12,7 +12,20 @@ describe('Schema', function() {
     const result = await joedb.listTables().run();
     requestTime(result);
     expect(result['status']).to.equal('OK');
-    expect(result['rows'].map(r => r.tableName)).to.have.members(['fruits', 'cars', 'books']);
+    expect(result['rows']).to.have.deep.members([
+      {
+        tableName: 'books',
+        type: 'hop'
+      },
+      {
+        tableName: 'cars',
+        type: 'hop'
+      },
+      {
+        tableName: 'fruits',
+        type: 'hop'
+      }
+    ]);
   });
 
   it('creates a tables', async () => {

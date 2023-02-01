@@ -148,7 +148,11 @@ JoeDB.prototype.listTables = function () {
   return this;
 };
 
-JoeDB.prototype.createTable = function(tableName) {
+JoeDB.prototype.createTable = function(tableName, options = {}) {
+  if (options.type) {
+    this.request.type = options.type;
+  }
+
   this.request.request = 'createTable';
   this.request.tableName = tableName;
   return this;

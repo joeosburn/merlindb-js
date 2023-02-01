@@ -37,6 +37,37 @@ describe('Schema', function() {
     expect(result['rows'].map(r => r.tableName)).to.have.members(['users', 'fruits', 'cars', 'books']);
   });
 
+  it('creates a table with type', async () => {
+    let result = await joedb.createTable('resources', {type: 'memory'}).run();
+    requestTime(result);
+    expect(result['status']).to.equal('OK');
+    expect(result['message']).to.equal('Table resources created');
+    result = await joedb.listTables().run();
+    expect(result['rows']).to.have.deep.members([
+      {
+        tableName: 'books',
+        type: 'hop'
+      },
+      {
+        tableName: 'cars',
+        type: 'hop'
+      },
+      {
+        tableName: 'fruits',
+        type: 'hop'
+      },
+      {
+        tableName: 'users',
+        type: 'hop'
+      },
+      {
+        tableName: 'resources',
+        type: 'memory'
+      }
+    ]);
+    await joedb.dropTable('resources').run();
+  });
+
   it('renames a tables', async () => {
     let result = await joedb.renameTable('users', 'accounts').run();
     requestTime(result);

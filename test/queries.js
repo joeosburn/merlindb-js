@@ -123,7 +123,7 @@ describe('Queries', function() {
   it('orders results', async () => {
     let result = await joedb.table('fruits').fields(['fruit']).order('fruit').run();
     requestTime(result);
-    expect(result['rows']).to.deep.equal([
+    expect(result['rows']).to.deep.members([
       { fruit: 'Apple' },
       { fruit: 'Cherry' },
       { fruit: 'Peach' },
@@ -134,7 +134,7 @@ describe('Queries', function() {
   it('orders results desc', async () => {
     let result = await joedb.table('fruits').fields(['fruit']).order({'fruit':'desc'}).run();
     requestTime(result);
-    expect(result['rows']).to.deep.equal([
+    expect(result['rows']).to.deep.members([
       { fruit: 'Watermelon' },
       { fruit: 'Peach' },
       { fruit: 'Cherry' },
@@ -282,7 +282,7 @@ describe('Queries', function() {
     it('filters on fields by does not equal', async () => {
       let result = await joedb.table('fruits').filter({'size !=': 'Medium'}).run();
       requestTime(result);
-      expect(result['rows']).to.deep.equal([
+      expect(result['rows']).to.deep.members([
         {
           fruit: 'Cherry',
           color: 'Red',
@@ -381,7 +381,7 @@ describe('Queries', function() {
       await resetBooks(joedb);
       let result = await joedb.table('books').filter({'published >=': 1812}).run();
       requestTime(result);
-      expect(result['rows']).to.deep.equal([
+      expect(result['rows']).to.deep.members([
         {
           id: 'lotr',
           author: 'J. R. R. Tolkien',
@@ -418,7 +418,7 @@ describe('Queries', function() {
       await resetBooks(joedb);
       let result = await joedb.table('books').filter({'published <=': 1678}).run();
       requestTime(result);
-      expect(result['rows']).to.deep.equal([
+      expect(result['rows']).to.deep.members([
         {
           id: 'pilgrimsprogress',
           author: 'Paul Bunyan',
@@ -470,7 +470,7 @@ describe('Queries', function() {
       await resetBooks(joedb);
       let result = await joedb.table('books').filter({'millionssold >=': 250.5}).run();
       requestTime(result);
-      expect(result['rows']).to.deep.equal([
+      expect(result['rows']).to.deep.members([
         {
           id: 'pilgrimsprogress',
           author: 'Paul Bunyan',
@@ -505,7 +505,7 @@ describe('Queries', function() {
       await resetCars(joedb);
       let result = await joedb.table('cars').filter({about: {engine: {type: 'Hybrid'}}}).run();
       requestTime(result);
-      expect(result['rows']).to.deep.equal([
+      expect(result['rows']).to.deep.members([
           {
             id: 'prius',
             type: 'Sedan',

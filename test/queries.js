@@ -201,6 +201,18 @@ describe('Queries', function() {
     ]);
   });
 
+  describe('Counting', () => {
+    it('counts all records', async () => {
+      let result = await joedb.table('fruits').count().run();
+      requestTime(result);
+      expect(result['rows']).to.deep.equal([
+        {
+          count: 4
+        }
+      ]);
+    });
+  });
+
   describe('Filtering', () => {
     it('filters on one condition', async () => {
       let result = await joedb.table('fruits').filter({size: 'Medium'}).run();

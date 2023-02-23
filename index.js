@@ -103,6 +103,11 @@ JoeDB.prototype.get = function(id) {
   return this;
 };
 
+JoeDB.prototype.count = function() {
+  this.request.request = 'count';
+  return this;
+}
+
 JoeDB.prototype.order = function(order) {
   this.request.order = this.request.order || [];
 

@@ -123,6 +123,43 @@ describe('Mutations', function() {
     ]);
   });
 
+  it('deletes a key from a row in a table', async () => {
+    await resetFruit(joedb);
+    let result = await joedb.table('fruits').get('apple').deleteKey('color').run();
+    requestTime(result);
+    expect(result['status']).to.equal('OK')
+    expect(result['message']).to.equal('1 row(s) updated');
+    result = await joedb.table('fruits').get('apple').run();
+    expect(result['rows']).to.deep.equal([{
+      id: 'apple',
+      fruit: 'Apple',
+      size: 'Medium'
+    }]);
+  });
+
+  it('deletes a key from all rows in a table', async () => {
+    await resetFruit(joedb);
+    let result = await joedb.table('fruits').deleteKey('color').run();
+    requestTime(result);
+    expect(result['status']).to.equal('OK')
+    expect(result['message']).to.equal('4 row(s) updated');
+    result = await joedb.table('fruits').fields(['id', 'color']).run();
+    expect(result['rows']).to.have.deep.members([
+      {
+        id: 'apple'
+      },
+      {
+        id: 'cherry'
+      },
+      {
+        id: 'peach'
+      },
+      {
+        id: 'watermelon'
+      }
+    ]);
+  });
+
   it('destroys rows from a table', async () => {
     await resetFruit(joedb);
     let result = await joedb.table('fruits').get('apple').destroy().run();

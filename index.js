@@ -148,6 +148,12 @@ JoeDB.prototype.replace = function(data) {
   return this;
 };
 
+JoeDB.prototype.deleteKey = function(key) {
+  this.request.request = 'deleteKey';
+  this.request.key = key;
+  return this;
+};
+
 JoeDB.prototype.listTables = function () {
   this.request.request = 'listTables';
   return this;

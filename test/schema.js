@@ -15,15 +15,15 @@ describe('Schema', function() {
     expect(result['rows']).to.have.deep.members([
       {
         tableName: 'books',
-        type: 'hop'
+        type: 'disk'
       },
       {
         tableName: 'cars',
-        type: 'hop'
+        type: 'disk'
       },
       {
         tableName: 'fruits',
-        type: 'hop'
+        type: 'disk'
       }
     ]);
   });
@@ -46,19 +46,19 @@ describe('Schema', function() {
     expect(result['rows']).to.have.deep.members([
       {
         tableName: 'books',
-        type: 'hop'
+        type: 'disk'
       },
       {
         tableName: 'cars',
-        type: 'hop'
+        type: 'disk'
       },
       {
         tableName: 'fruits',
-        type: 'hop'
+        type: 'disk'
       },
       {
         tableName: 'users',
-        type: 'hop'
+        type: 'disk'
       },
       {
         tableName: 'resources',

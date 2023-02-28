@@ -75,22 +75,6 @@ JoeDB.prototype.filter = function(filters) {
   return this;
 };
 
-JoeDB.prototype.prefilter = function(filters) {
-  filters = prepareFilter(filters);
-
-  if (this.request.prefilters) {
-    if (!Array.isArray(this.request.prefilters)) {
-      this.request.prefilters = [this.request.prefilters];
-    }
-
-    this.request.prefilters.push(filters);
-  } else {
-    this.request.prefilters = filters;
-  }
-
-  return this;
-};
-
 JoeDB.prototype.include = function(includes) {
   this.request.includes = this.request.includes || [];
   this.request.includes.push(includes);

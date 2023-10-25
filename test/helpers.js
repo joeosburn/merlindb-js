@@ -130,22 +130,22 @@ const chai = require('chai');
 const chaiArrays = require('chai-arrays');
 chai.use(chaiArrays);
 
-module.exports.resetBooks = async (joedb) => {
-  await joedb.createTable('books').run();
-  await joedb.table('books').destroy().run();
-  await joedb.table('books').insert(bookRows).run();
+module.exports.resetBooks = async (merlindb) => {
+  await merlindb.createTable('books').run();
+  await merlindb.table('books').destroy().run();
+  await merlindb.table('books').insert(bookRows).run();
 }
 
-module.exports.resetCars = async (joedb) => {
-  await joedb.createTable('cars').run();
-  await joedb.table('cars').destroy().run();
-  await joedb.table('cars').insert(carRows).run();
+module.exports.resetCars = async (merlindb) => {
+  await merlindb.createTable('cars').run();
+  await merlindb.table('cars').destroy().run();
+  await merlindb.table('cars').insert(carRows).run();
 }
 
-module.exports.resetFruit = async (joedb) => {
-  await joedb.createTable('fruits').run();
-  await joedb.table('fruits').destroy().run();
-  await joedb.table('fruits').insert(fruitRows).run();
+module.exports.resetFruit = async (merlindb) => {
+  await merlindb.createTable('fruits').run();
+  await merlindb.table('fruits').destroy().run();
+  await merlindb.table('fruits').insert(fruitRows).run();
 }
 
 module.exports.requestTime = (result) => {

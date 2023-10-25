@@ -1,18 +1,18 @@
 const { expect } = require('chai');
-const JoeDB = require('..');
+const MerlinDB = require('..');
 const { requestTime, resetFruit } = require('./helpers.js');
-const joedb = new JoeDB('joedb://default:joedb@localhost:8080');
+const merlindb = new MerlinDB('merlindb://default:merlindb@localhost:8080');
 
 describe('Requests', function() {
-  before(async () => await joedb.connect());
+  before(async () => await merlindb.connect());
 
-  after(() => joedb.disconnect());
+  after(() => merlindb.disconnect());
 
   it('inserts multiple rows into a table via multiple mutations', async () => {
-    await resetFruit(joedb);
-    await joedb.table('fruits').destroy().run();
+    await resetFruit(merlindb);
+    await merlindb.table('fruits').destroy().run();
 
-    let result = await joedb
+    let result = await merlindb
       .table('fruits').insert({
         id: 'pineapple',
         fruit: 'Pinneapple'
@@ -35,7 +35,7 @@ describe('Requests', function() {
       expect(response['message']).to.equal('1 row(s) inserted');
     });
 
-    result = await joedb.table('fruits').run();
+    result = await merlindb.table('fruits').run();
     expect(result['rows']).to.have.deep.members([
       {
         fruit: 'Pinneapple',
@@ -53,7 +53,7 @@ describe('Requests', function() {
   });
 
   it('names multiple requests', async () => {
-    let result = await joedb
+    let result = await merlindb
       .listTables().as('first').queue()
       .table('fruits').as('second').run();
 

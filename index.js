@@ -1,6 +1,7 @@
 const net = require('net');
 const msgpack = require('msgpack-lite');
-function JoeDB(url) {
+
+function MerlinDB(url) {
   this.socket = new net.Socket();
   this.url = url;
   this.request = {};
@@ -44,13 +45,13 @@ function JoeDB(url) {
   });
 }
 
-JoeDB.prototype.table = function(tableName) {
+MerlinDB.prototype.table = function(tableName) {
   this.request.table = tableName;
   this.request.request = 'get';
   return this;
 };
 
-JoeDB.prototype.fields = function(fields) {
+MerlinDB.prototype.fields = function(fields) {
   if (Array.isArray(fields)) {
     fields = Object.fromEntries(fields.map(name => [name, true]));
   }
@@ -59,7 +60,7 @@ JoeDB.prototype.fields = function(fields) {
   return this;
 };
 
-JoeDB.prototype.filter = function(filters) {
+MerlinDB.prototype.filter = function(filters) {
   filters = prepareFilter(filters);
 
   if (this.request.filters) {
@@ -75,24 +76,24 @@ JoeDB.prototype.filter = function(filters) {
   return this;
 };
 
-JoeDB.prototype.include = function(includes) {
+MerlinDB.prototype.include = function(includes) {
   this.request.includes = this.request.includes || [];
   this.request.includes.push(includes);
   return this;
 };
 
-JoeDB.prototype.get = function(id) {
+MerlinDB.prototype.get = function(id) {
   this.request.request = 'get';
   this.request.id = id;
   return this;
 };
 
-JoeDB.prototype.count = function() {
+MerlinDB.prototype.count = function() {
   this.request.request = 'count';
   return this;
 }
 
-JoeDB.prototype.order = function(order) {
+MerlinDB.prototype.order = function(order) {
   this.request.order = this.request.order || [];
 
   if (typeof order === 'string') {
@@ -104,46 +105,46 @@ JoeDB.prototype.order = function(order) {
   return this;
 }
 
-JoeDB.prototype.limit = function(limit) {
+MerlinDB.prototype.limit = function(limit) {
   this.request.limit = limit;
   return this;
 }
 
-JoeDB.prototype.insert = function(rows) {
+MerlinDB.prototype.insert = function(rows) {
   this.request.request = 'insert';
   this.request.rows = Array.isArray(rows) ? rows : Array.of(rows);
   return this;
 };
 
-JoeDB.prototype.destroy = function() {
+MerlinDB.prototype.destroy = function() {
   this.request.request = 'destroy';
   return this;
 };
 
-JoeDB.prototype.update = function(data) {
+MerlinDB.prototype.update = function(data) {
   this.request.request = 'update';
   this.request.data = data;
   return this;
 };
 
-JoeDB.prototype.replace = function(data) {
+MerlinDB.prototype.replace = function(data) {
   this.request.request = 'replace';
   this.request.data = data;
   return this;
 };
 
-JoeDB.prototype.deleteKey = function(key) {
+MerlinDB.prototype.deleteKey = function(key) {
   this.request.request = 'deleteKey';
   this.request.key = key;
   return this;
 };
 
-JoeDB.prototype.listTables = function () {
+MerlinDB.prototype.listTables = function () {
   this.request.request = 'listTables';
   return this;
 };
 
-JoeDB.prototype.createTable = function(tableName, options = {}) {
+MerlinDB.prototype.createTable = function(tableName, options = {}) {
   if (options.type) {
     this.request.type = options.type;
   }
@@ -153,31 +154,31 @@ JoeDB.prototype.createTable = function(tableName, options = {}) {
   return this;
 };
 
-JoeDB.prototype.dropTable = function(tableName) {
+MerlinDB.prototype.dropTable = function(tableName) {
   this.request.request = 'dropTable';
   this.request.tableName = tableName;
   return this;
 };
 
-JoeDB.prototype.renameTable = function(oldTableName, newTableName) {
+MerlinDB.prototype.renameTable = function(oldTableName, newTableName) {
   this.request.request = 'renameTable';
   this.request.oldTableName = oldTableName;
   this.request.newTableName = newTableName;
   return this;
 };
 
-JoeDB.prototype.as = function(requestName) {
+MerlinDB.prototype.as = function(requestName) {
   this.request.requestName = requestName;
   return this;
 }
 
-JoeDB.prototype.queue = function() {
+MerlinDB.prototype.queue = function() {
   this.requests.push(this.request);
   this.request = {};
   return this;
 }
 
-JoeDB.prototype.run = function(cb) {
+MerlinDB.prototype.run = function(cb) {
   let message = this.request;
 
   if (this.requests.length) {
@@ -216,8 +217,8 @@ JoeDB.prototype.run = function(cb) {
   }
 };
 
-JoeDB.prototype.connect = function() {
-  const urlMatches = this.url.match(/joedb\:\/\/(?:([^:@]+):?([^@]+)?@)?([^:]+)\:(\d+)/);
+MerlinDB.prototype.connect = function() {
+  const urlMatches = this.url.match(/merlindb\:\/\/(?:([^:@]+):?([^@]+)?@)?([^:]+)\:(\d+)/);
   const username = urlMatches[1];
   const password = urlMatches[2];
   const host = urlMatches[3];
@@ -243,11 +244,11 @@ JoeDB.prototype.connect = function() {
   }));
 }
 
-JoeDB.prototype.disconnect = function() {
+MerlinDB.prototype.disconnect = function() {
   this.socket.destroy();
 };
 
-JoeDB.Or = function(...filters) {
+MerlinDB.Or = function(...filters) {
   return {__or: filters};
 };
 
@@ -304,4 +305,4 @@ function prepareFilterValue(key, value) {
   ]
 }
 
-module.exports = JoeDB;
+module.exports = MerlinDB;

@@ -249,7 +249,7 @@ MerlinDB.prototype.disconnect = function() {
 };
 
 MerlinDB.Or = function(...filters) {
-  return {__or: filters};
+  return {$or: filters};
 };
 
 function currentTime() {
@@ -290,17 +290,30 @@ function prepareFilter(filters) {
   }
 }
 
+const operatorsMap = {
+    "==": "$eq",
+    "!=": "$ne",
+    ">": "$gt",
+    ">=": "$gte",
+    "<": "$lt",
+    "<=": "$lte",
+    "LIKE": "$like",
+    "NOTLIKE": "$notlike",
+    "CONTAINS": "$contains",
+    "NOTCONTAINS": "$notcontains",
+    "=~": "$regex"
+}
+
 function prepareFilterValue(key, value) {
   const keyInfo = key.split(' ');
 
   key = keyInfo[0];
-  const operator = keyInfo[1] || '==';
+  const operator = operatorsMap[keyInfo[1] || '=='];
 
   return [
     key,
     {
-      __operator: operator,
-      __value: value
+      [operator]: value,
     }
   ]
 }
